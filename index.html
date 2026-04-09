@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stock Analyzer Pro</title>
+<title>StockPro — Análise de Ações</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f13;--bg2:#13161c;--bg3:#1a1e27;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8eaf0;--muted:#7a8099;--accent:#4f8ef7;--green:#4ecb8d;--red:#f06060;--amber:#f0b04f;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+:root{--bg:#0d0f13;--bg2:#13161c;--bg3:#1a1e27;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#e8eaf0;--muted:#7a8099;--accent:#4f8ef7;--green:#4ecb8d;--red:#f06060;--amber:#f0b04f;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 .app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:56px 1fr;height:100vh}
@@ -16,22 +16,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .main{overflow-y:auto;padding:24px}
 .logo{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--accent);white-space:nowrap;margin-right:4px}
 .search-wrap{display:flex;gap:8px;flex:1;max-width:500px}
-.search-wrap input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none}
+.search-wrap input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border .15s}
 .search-wrap input:focus{border-color:var(--accent)}
 .search-wrap input::placeholder{color:var(--muted)}
-.btn{padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;white-space:nowrap}
-.btn:hover{opacity:.85}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn{padding:7px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;white-space:nowrap;transition:opacity .15s}
+.btn:hover{opacity:.85}.btn:disabled{opacity:.4;cursor:not-allowed}
 .period-group{display:flex;gap:3px;margin-left:auto}
-.period-btn{padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px;font-family:var(--mono)}
-.period-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.period-btn{padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .15s}
+.period-btn.active,.period-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .sidebar-section{padding:0 12px;margin-bottom:20px}
 .sidebar-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:0 8px;margin-bottom:8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:13px;transition:all .15s}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:13px;transition:all .15s;user-select:none}
 .nav-item:hover{background:var(--bg3);color:var(--text)}.nav-item.active{background:rgba(79,142,247,.12);color:var(--accent);font-weight:500}
 .hist-item{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .15s}
 .hist-item:hover{background:var(--bg3)}.hist-ticker{font-family:var(--mono);font-size:12px;font-weight:500}
 .panel{display:none}.panel.active{display:block}
-.price-num{font-family:var(--mono);font-size:36px;font-weight:500}
+.price-num{font-family:var(--mono);font-size:36px;font-weight:500;letter-spacing:-1px}
 .badge{font-family:var(--mono);font-size:13px;font-weight:500;padding:4px 10px;border-radius:6px}
 .badge.up{background:rgba(78,203,141,.15);color:var(--green)}.badge.dn{background:rgba(240,96,96,.15);color:var(--red)}
 .price-meta{font-size:12px;color:var(--muted);margin-top:6px;font-family:var(--mono)}
@@ -44,8 +44,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .chart-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
 .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .chart-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
-.overlay-controls{display:flex;gap:6px}
-.ovl-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--muted);font-family:var(--mono)}
+.ovl-controls{display:flex;gap:6px}
+.ovl-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--muted);font-family:var(--mono);transition:all .15s}
 .ovl-btn.on{border-color:currentColor}.ovl-btn[data-c="b"].on{color:#4f8ef7}.ovl-btn[data-c="r"].on{color:#f06060}.ovl-btn[data-c="a"].on{color:#f0b04f}
 .chart-wrap{position:relative;width:100%}
 .fund-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -82,18 +82,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ticker-cell{font-family:var(--mono);font-weight:500;color:var(--accent)}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--muted);text-align:center;gap:8px}
 .empty-icon{font-size:40px;opacity:.4}
-.loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted);gap:10px}
-.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted);gap:10px;flex-direction:column}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.error-box{background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.2);border-radius:10px;padding:14px 16px;color:var(--red);font-size:13px;margin-bottom:16px}
+.error-box{background:rgba(240,96,96,.08);border:1px solid rgba(240,96,96,.2);border-radius:10px;padding:14px 16px;color:var(--red);font-size:13px;margin-bottom:16px;line-height:1.6}
 .progress{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:12px}
 .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
 .quick-chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--mono)}
+.chip{font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--mono);transition:all .15s}
 .chip:hover{border-color:var(--accent);color:var(--accent)}
 .section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px}
-.proxy-badge{font-size:10px;color:var(--muted);font-family:var(--mono);padding:3px 8px;border:1px solid var(--border);border-radius:4px}
-@media(max-width:700px){.app{grid-template-columns:1fr}.sidebar{display:none}.fund-grid{grid-template-columns:1fr}}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.app{grid-template-columns:1fr;grid-template-rows:56px auto 1fr}.sidebar{display:none}.fund-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -112,7 +112,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <button class="period-btn" onclick="setPeriod('1y',this)">1A</button>
     <button class="period-btn" onclick="setPeriod('2y',this)">2A</button>
   </div>
-  <span class="proxy-badge" id="proxy-badge" style="display:none"></span>
 </div>
 
 <div class="sidebar">
@@ -136,6 +135,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="hist-item" onclick="quickLoad('VALE3.SA')"><span class="hist-ticker">VALE3.SA</span><span style="color:var(--muted);font-size:11px">Vale</span></div>
     <div class="hist-item" onclick="quickLoad('WEGE3.SA')"><span class="hist-ticker">WEGE3.SA</span><span style="color:var(--muted);font-size:11px">WEG</span></div>
     <div class="hist-item" onclick="quickLoad('ITUB4.SA')"><span class="hist-ticker">ITUB4.SA</span><span style="color:var(--muted);font-size:11px">Itaú</span></div>
+    <div class="hist-item" onclick="quickLoad('PRIO3.SA')"><span class="hist-ticker">PRIO3.SA</span><span style="color:var(--muted);font-size:11px">PRIO</span></div>
   </div>
 </div>
 
@@ -144,9 +144,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div id="analise-content">
       <div class="empty">
         <div class="empty-icon">◈</div>
-        <div>Digite um ticker para começar</div>
-        <div style="font-size:12px">Ex: AAPL · MSFT · PETR4.SA · VALE3.SA</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">Ações brasileiras precisam do sufixo .SA</div>
+        <div style="font-size:15px;font-weight:500">Digite um ticker para começar</div>
+        <div style="font-size:12px">AAPL · MSFT · NVDA · PETR4.SA · VALE3.SA · WEGE3.SA</div>
+        <div style="font-size:11px;color:var(--muted)">Ações brasileiras: use sufixo .SA</div>
       </div>
     </div>
   </div>
@@ -155,7 +155,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="panel" id="panel-screener">
     <div class="screener-wrap">
       <div class="tickers-area">
-        <div class="section-label" style="margin-bottom:8px">Tickers</div>
+        <div class="section-label" style="margin-bottom:8px">Tickers para analisar</div>
         <div class="quick-chips" style="margin-bottom:10px">
           <button class="chip" onclick="setChip('PETR4.SA,VALE3.SA,ITUB4.SA,BBDC4.SA,ABEV3.SA,WEGE3.SA,RENT3.SA,RADL3.SA,B3SA3.SA,MGLU3.SA')">IBov Top 10</button>
           <button class="chip" onclick="setChip('AAPL,MSFT,GOOGL,AMZN,NVDA,META,TSLA,AMD,INTC,NFLX')">US Tech</button>
@@ -174,92 +174,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 </div>
 
 <script>
-let D=null,period='6mo',charts={},history=[],activeProxyIdx=null;
+const API_KEY = 'jSvT9bE2rcVL8Zaw8OVzicualn9XAw08';
+const BASE = 'https://financialmodelingprep.com/api';
 
-// ─── PROXY POOL ───────────────────────────────────────────────────────────
-// Try each proxy in order; remember the one that works
-const PROXIES=[
-  {
-    name:'corsproxy.io',
-    build:url=>'https://corsproxy.io/?'+encodeURIComponent(url),
-    extract:text=>text
-  },
-  {
-    name:'allorigins',
-    build:url=>'https://api.allorigins.win/get?url='+encodeURIComponent(url),
-    extract:text=>JSON.parse(text).contents
-  },
-  {
-    name:'codetabs',
-    build:url=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),
-    extract:text=>text
-  },
-  {
-    name:'crossorigin.me',
-    build:url=>'https://crossorigin.me/'+url,
-    extract:text=>text
-  },
-  {
-    name:'thingproxy',
-    build:url=>'https://thingproxy.freeboard.io/fetch/'+url,
-    extract:text=>text
-  },
-];
+let D = null, period = '6mo', charts = {}, history = [];
 
-async function tryProxy(proxyIdx, url, ms=9000){
-  const p=PROXIES[proxyIdx];
-  const ctrl=new AbortController();
-  const tid=setTimeout(()=>ctrl.abort(),ms);
-  try{
-    const res=await fetch(p.build(url),{signal:ctrl.signal});
-    clearTimeout(tid);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const text=await res.text();
-    const jsonStr=p.extract(text);
-    const data=JSON.parse(jsonStr);
-    // Basic validation: must be Yahoo Finance data
-    if(!data||(data.chart===undefined&&data.quoteSummary===undefined)) throw new Error('bad data');
-    return data;
-  }catch(e){
-    clearTimeout(tid);
-    throw e;
-  }
+// ─── FMP helpers ──────────────────────────────────────────────────────────
+function periodToDays(p){ return {'1mo':30,'3mo':90,'6mo':180,'1y':365,'2y':730}[p]||180; }
+
+// FMP uses YYYY-MM-DD range
+function periodDates(p){
+  const to = new Date(), from = new Date();
+  from.setDate(from.getDate() - periodToDays(p));
+  return {from: from.toISOString().slice(0,10), to: to.toISOString().slice(0,10)};
 }
 
-async function proxyFetch(url){
-  // Build attempt order: active proxy first, then others
-  const order=activeProxyIdx!==null
-    ?[activeProxyIdx,...PROXIES.map((_,i)=>i).filter(i=>i!==activeProxyIdx)]
-    :PROXIES.map((_,i)=>i);
-  let lastErr='';
-  for(const idx of order){
-    try{
-      const data=await tryProxy(idx,url);
-      activeProxyIdx=idx;
-      const badge=document.getElementById('proxy-badge');
-      badge.style.display='inline';
-      badge.textContent='proxy: '+PROXIES[idx].name;
-      return data;
-    }catch(e){
-      lastErr=e.message;
-      continue;
-    }
-  }
-  throw new Error('Todos os proxies falharam ('+lastErr+'). Tente novamente ou verifique sua conexão.');
+// FMP ticker: Brazilian stocks use format like PETR4.SA → just pass as-is, FMP supports it
+async function fmp(path){
+  const url = `${BASE}${path}${path.includes('?')?'&':'?'}apikey=${API_KEY}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(`FMP error ${res.status} for ${path}`);
+  return res.json();
 }
 
 // ─── UTILS ────────────────────────────────────────────────────────────────
-const $=id=>document.getElementById(id);
-const fmt=(v,d=2,suf='')=>{
-  if(v===null||v===undefined||isNaN(v))return'—';
-  const n=parseFloat(v);
-  if(Math.abs(n)>=1e12)return(n/1e12).toFixed(1)+'T'+suf;
-  if(Math.abs(n)>=1e9)return(n/1e9).toFixed(1)+'B'+suf;
-  if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'M'+suf;
+const $ = id => document.getElementById(id);
+const fmt = (v,d=2,suf='') => {
+  if(v===null||v===undefined||isNaN(v)||v===0&&suf==='') return '—';
+  const n = parseFloat(v);
+  if(Math.abs(n)>=1e12) return (n/1e12).toFixed(1)+'T'+suf;
+  if(Math.abs(n)>=1e9)  return (n/1e9).toFixed(1)+'B'+suf;
+  if(Math.abs(n)>=1e6)  return (n/1e6).toFixed(1)+'M'+suf;
   return n.toFixed(d)+suf;
 };
-const pct=v=>v===null||v===undefined||isNaN(v)?'—':((v>0?'+':'')+parseFloat(v).toFixed(2)+'%');
-const clr=v=>parseFloat(v)>=0?'var(--green)':'var(--red)';
+const pct = v => v===null||v===undefined||isNaN(v)?'—':((v>0?'+':'')+parseFloat(v).toFixed(2)+'%');
+const clr = v => parseFloat(v)>=0?'var(--green)':'var(--red)';
+const n2 = v => v===null||v===undefined||isNaN(v)?'—':parseFloat(v).toFixed(2);
+const n1 = v => v===null||v===undefined||isNaN(v)?'—':parseFloat(v).toFixed(1);
 
 // ─── MATH ─────────────────────────────────────────────────────────────────
 function calcRSI(p,n=14){
@@ -267,8 +218,7 @@ function calcRSI(p,n=14){
   for(let i=n;i<p.length;i++){
     let g=0,l=0;
     for(let j=i-n+1;j<=i;j++){const d=p[j]-p[j-1];d>0?g+=d:l-=d;}
-    const rs=l===0?100:(g/n)/(l/n);
-    r[i]=100-(100/(1+rs));
+    r[i]=100-(100/(1+(l===0?100:(g/n)/(l/n))));
   }
   return r;
 }
@@ -281,10 +231,10 @@ function ema(arr,n){
   for(let i=s+1;i<arr.length;i++){o[i]=arr[i]===null?o[i-1]:arr[i]*k+o[i-1]*(1-k);}
   return o;
 }
-function calcMACD(p,fast=12,slow=26,sig=9){
-  const ef=ema(p,fast),es=ema(p,slow);
+function calcMACD(p){
+  const ef=ema(p,12),es=ema(p,26);
   const m=p.map((_,i)=>ef[i]!==null&&es[i]!==null?ef[i]-es[i]:null);
-  const s=ema(m,sig);
+  const s=ema(m,9);
   return[m,s,m.map((v,i)=>v!==null&&s[i]!==null?v-s[i]:null)];
 }
 function calcBB(p,n=20,sd=2){
@@ -299,82 +249,105 @@ function calcBB(p,n=20,sd=2){
 }
 function rollMean(p,n){return p.map((_,i)=>i<n-1?null:p.slice(i-n+1,i+1).reduce((a,b)=>a+b,0)/n);}
 
-// ─── FETCH ────────────────────────────────────────────────────────────────
+// ─── FETCH STOCK ──────────────────────────────────────────────────────────
 async function fetchStock(ticker){
   ticker=(ticker||$('ticker-input').value.trim().toUpperCase()).replace(/\s/g,'');
   if(!ticker)return;
   $('ticker-input').value=ticker;
-  $('analise-content').innerHTML='<div class="loading"><div class="spinner"></div>Buscando '+ticker+'...</div>';
+  $('analise-content').innerHTML=`<div class="loading"><div class="spinner"></div><div style="font-size:13px">Buscando ${ticker}...</div></div>`;
   $('search-btn').disabled=true;
+
   try{
-    const data=await proxyFetch('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range='+period+'&events=history');
-    if(!data.chart||data.chart.error||!data.chart.result||!data.chart.result[0])
-      throw new Error('Ticker "'+ticker+'" não encontrado. Para ações BR, adicione .SA (ex: PETR4.SA)');
-    const cr=data.chart.result[0],meta=cr.meta;
-    const ts=cr.timestamp||[],q=cr.indicators.quote[0];
-    const closes=q.close||[],highs=q.high||[],lows=q.low||[],vols=q.volume||[];
-    const rows=[];
-    for(let i=0;i<closes.length;i++){
-      if(closes[i]!==null&&closes[i]!==undefined)
-        rows.push({date:new Date(ts[i]*1000).toISOString().slice(0,10),c:closes[i],h:highs[i]||closes[i],l:lows[i]||closes[i],v:vols[i]||0});
-    }
-    if(rows.length<2)throw new Error('Dados insuficientes para este ticker.');
-    const prices=rows.map(r=>r.c);
-    const last=prices[prices.length-1],prev=prices[prices.length-2]||last;
-    const chg=last-prev,chgPct=(chg/prev)*100;
-    const ma20=rollMean(prices,20),ma50=rollMean(prices,50),ma200=rollMean(prices,200);
-    const rsi=calcRSI(prices,14),[macdL,sigL,macdH]=calcMACD(prices),[bbU,bbM,bbLo]=calcBB(prices);
+    const {from,to}=periodDates(period);
+
+    // 1. Quote (preço atual + fundamentos básicos)
+    const [quotes, histData, profileData, ratiosData, incomeData] = await Promise.all([
+      fmp(`/v3/quote/${encodeURIComponent(ticker)}`),
+      fmp(`/v3/historical-price-full/${encodeURIComponent(ticker)}?from=${from}&to=${to}`),
+      fmp(`/v3/profile/${encodeURIComponent(ticker)}`),
+      fmp(`/v3/ratios-ttm/${encodeURIComponent(ticker)}`),
+      fmp(`/v3/income-statement/${encodeURIComponent(ticker)}?limit=1`),
+    ]);
+
+    if(!quotes||!quotes[0]) throw new Error(`Ticker "${ticker}" não encontrado na FMP.\nDica: ações BR usam sufixo .SA (ex: PETR4.SA)`);
+
+    const q = quotes[0];
+    const profile = profileData?.[0] || {};
+    const ratios = ratiosData?.[0] || {};
+    const income = incomeData?.[0] || {};
+
+    // Historical prices (FMP returns newest first — reverse)
+    const hist = (histData?.historical || []).reverse();
+    if(hist.length < 2) throw new Error('Dados históricos insuficientes para este ticker.');
+
+    const prices = hist.map(h=>h.close);
+    const dates  = hist.map(h=>h.date);
+    const volumes= hist.map(h=>h.volume||0);
+
+    const last=prices[prices.length-1], prev=prices[prices.length-2]||last;
+    const chg=last-prev, chgPct=(chg/prev)*100;
+
+    const ma20=rollMean(prices,20), ma50=rollMean(prices,50), ma200=rollMean(prices,200);
+    const rsiArr=calcRSI(prices,14), [macdL,sigL,macdH]=calcMACD(prices), [bbU,bbM,bbLo]=calcBB(prices);
+
     D={
-      ticker,name:meta.longName||meta.shortName||ticker,
-      currency:meta.currency||'USD',exchange:meta.exchangeName||'',
-      sector:'—',industry:'—',fundamentals:null,
-      price:{current:last,change:chg,changePct:chgPct,
-             high:Math.max(...rows.map(r=>r.h)),low:Math.min(...rows.map(r=>r.l)),
-             volume:vols[vols.length-1]||0,
-             avgVolume:Math.round(vols.filter(v=>v).reduce((a,b)=>a+b,0)/Math.max(1,vols.filter(v=>v).length)),
-             high52w:Math.max(...prices),low52w:Math.min(...prices)},
-      chart:{dates:rows.map(r=>r.date),close:prices,volume:rows.map(r=>r.v),
-             ma20,ma50,ma200,bbU,bbLo,rsi,macd:macdL,signal:sigL,macdH},
+      ticker, name:q.name||profile.companyName||ticker,
+      currency:q.currency||profile.currency||'USD',
+      exchange:q.exchange||profile.exchangeShortName||'',
+      sector:profile.sector||'—', industry:profile.industry||'—',
+      price:{
+        current:q.price||last, change:q.change??chg, changePct:q.changesPercentage??chgPct,
+        high:q.dayHigh||last, low:q.dayLow||last, open:q.open||last,
+        volume:q.volume||0, avgVolume:q.avgVolume||0,
+        high52w:q.yearHigh||Math.max(...prices), low52w:q.yearLow||Math.min(...prices),
+        mktCap:q.marketCap||0,
+      },
+      chart:{dates,close:prices,volume:volumes,ma20,ma50,ma200,bbU,bbLo,rsiArr,macd:macdL,signal:sigL,macdH},
       technicals:{
-        rsi:rsi[rsi.length-1],macd:macdL[macdL.length-1],macdSig:sigL[sigL.length-1],macdH:macdH[macdH.length-1],
-        ma20:ma20[ma20.length-1],ma50:ma50[ma50.length-1],ma200:ma200[ma200.length-1],
-        bbU:bbU[bbU.length-1],bbL:bbLo[bbLo.length-1],
+        rsi:rsiArr[rsiArr.length-1],
+        macd:macdL[macdL.length-1], macdSig:sigL[sigL.length-1], macdH:macdH[macdH.length-1],
+        ma20:ma20[ma20.length-1], ma50:ma50[ma50.length-1], ma200:ma200[ma200.length-1],
+        bbU:bbU[bbU.length-1], bbL:bbLo[bbLo.length-1],
         pvMa20:ma20[ma20.length-1]?((last/ma20[ma20.length-1]-1)*100):null,
         pvMa50:ma50[ma50.length-1]?((last/ma50[ma50.length-1]-1)*100):null,
         pvMa200:ma200[ma200.length-1]?((last/ma200[ma200.length-1]-1)*100):null,
+      },
+      fundamentals:{
+        pe:q.pe||ratios.peRatioTTM||null,
+        forwardPE:ratios.forwardPERatioTTM||null,
+        pb:ratios.priceToBookRatioTTM||null,
+        ps:ratios.priceToSalesRatioTTM||null,
+        evEbitda:ratios.enterpriseValueMultipleTTM||null,
+        divYield:(q.dividendYield||ratios.dividendYieldTTM||0)*100,
+        roe:(ratios.returnOnEquityTTM||0)*100,
+        roa:(ratios.returnOnAssetsTTM||0)*100,
+        profitM:(ratios.netProfitMarginTTM||0)*100,
+        opM:(ratios.operatingProfitMarginTTM||0)*100,
+        grossM:(ratios.grossProfitMarginTTM||0)*100,
+        dte:ratios.debtEquityRatioTTM||null,
+        cr:ratios.currentRatioTTM||null,
+        eps:q.eps||null,
+        beta:profile.beta||null,
+        target:q.priceAvg50||null,
+        analystTarget:q.analystEstimatedPriceTarget||null,
+        revenue:income.revenue||null,
+        ebitda:income.ebitda||null,
+        mktCap:q.marketCap||null,
+        description:profile.description||'',
+        upside:q.analystEstimatedPriceTarget?((q.analystEstimatedPriceTarget/(q.price||last)-1)*100):null,
       }
     };
-    try{
-      const fd=await proxyFetch('https://query1.finance.yahoo.com/v10/finance/quoteSummary/'+encodeURIComponent(ticker)+'?modules=defaultKeyStatistics,financialData,summaryDetail,assetProfile');
-      if(fd.quoteSummary&&fd.quoteSummary.result){
-        const fr=fd.quoteSummary.result[0];
-        const ks=fr.defaultKeyStatistics||{},fdd=fr.financialData||{},sd=fr.summaryDetail||{},ap=fr.assetProfile||{};
-        D.sector=ap.sector||'—';D.industry=ap.industry||'—';
-        D.fundamentals={
-          pe:sd.trailingPE?.raw||null,forwardPE:sd.forwardPE?.raw||null,pb:ks.priceToBook?.raw||null,
-          ps:ks.priceToSalesTrailing12Months?.raw||null,evEbitda:ks.enterpriseToEbitda?.raw||null,
-          evRev:ks.enterpriseToRevenue?.raw||null,divYield:(sd.dividendYield?.raw||0)*100,
-          payout:(sd.payoutRatio?.raw||0)*100,roe:(fdd.returnOnEquity?.raw||0)*100,
-          roa:(fdd.returnOnAssets?.raw||0)*100,profitM:(fdd.profitMargins?.raw||0)*100,
-          opM:(fdd.operatingMargins?.raw||0)*100,grossM:(fdd.grossMargins?.raw||0)*100,
-          revG:(fdd.revenueGrowth?.raw||0)*100,epsG:(fdd.earningsGrowth?.raw||0)*100,
-          dte:fdd.debtToEquity?.raw||null,cr:fdd.currentRatio?.raw||null,qr:fdd.quickRatio?.raw||null,
-          eps:ks.trailingEps?.raw||null,fwdEps:ks.forwardEps?.raw||null,bv:ks.bookValue?.raw||null,
-          rev:fdd.totalRevenue?.raw||null,ebitda:fdd.ebitda?.raw||null,beta:ks.beta?.raw||null,
-          target:fdd.targetMeanPrice?.raw||null,mkCap:ks.enterpriseValue?.raw||null,
-          upside:fdd.targetMeanPrice?.raw?((fdd.targetMeanPrice.raw/last-1)*100):null,
-        };
-      }
-    }catch(e){}
+
     history=history.filter(h=>h.ticker!==ticker);
-    history.unshift({ticker,chgPct});
+    history.unshift({ticker,chgPct:D.price.changePct});
     if(history.length>6)history.pop();
     renderHistory();
     renderAnalise();
     if($('panel-fundamentos').classList.contains('active'))renderFundamentos();
     if($('panel-tecnicos').classList.contains('active'))renderTecnicos();
+
   }catch(e){
-    $('analise-content').innerHTML='<div class="error-box">⚠ '+e.message+'</div><div class="empty" style="min-height:150px"><div>Dica: ações brasileiras precisam do sufixo .SA<br><span style="font-family:var(--mono);font-size:12px">PETR4.SA · VALE3.SA · WEGE3.SA · ITUB4.SA</span></div></div>';
+    $('analise-content').innerHTML=`<div class="error-box">⚠ ${e.message}</div><div class="empty" style="min-height:150px"><div>Exemplos válidos:<br><span style="font-family:var(--mono);font-size:12px">AAPL · NVDA · MSFT · PETR4.SA · VALE3.SA · WEGE3.SA</span></div></div>`;
   }
   $('search-btn').disabled=false;
 }
@@ -392,22 +365,24 @@ function renderHistory(){
   $('history-list').innerHTML=history.map(h=>`<div class="hist-item" onclick="quickLoad('${h.ticker}')"><span class="hist-ticker">${h.ticker}</span><span style="font-family:var(--mono);font-size:11px;color:${clr(h.chgPct)}">${pct(h.chgPct)}</span></div>`).join('');
 }
 
-// ─── RENDER ANALISE ───────────────────────────────────────────────────────
+// ─── RENDER ANÁLISE ────────────────────────────────────────────────────────
 function renderAnalise(){
-  const d=D,up=d.price.changePct>=0;
-  const rsi=d.technicals.rsi,rsiSig=rsi<30?'Sobrevendido':rsi>70?'Sobrecomprado':'Neutro';
+  const d=D, up=d.price.changePct>=0;
+  const rsi=d.technicals.rsi;
+  const rsiSig=rsi<30?'Sobrevendido':rsi>70?'Sobrecomprado':'Neutro';
   const rsiCls=rsi<30?'g':rsi>70?'r':'a';
-  const hi52=d.price.current/d.price.high52w*100;
+  const hi52=d.price.high52w?((d.price.current/d.price.high52w)*100):null;
+
   $('analise-content').innerHTML=`
 <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
   <div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">${d.exchange} · ${d.currency}</div>
-    <div style="font-size:18px;font-weight:500;margin-bottom:8px">${d.name}</div>
+    <div style="font-size:18px;font-weight:500;margin-bottom:8px;max-width:500px">${d.name}</div>
     <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-      <span class="price-num">${d.currency} ${fmt(d.price.current,2)}</span>
-      <span class="badge ${up?'up':'dn'}">${up?'+':''}${fmt(d.price.change,2)} (${pct(d.price.changePct)})</span>
+      <span class="price-num">${d.currency==='BRL'?'R$':d.currency} ${n2(d.price.current)}</span>
+      <span class="badge ${up?'up':'dn'}">${up?'+':''}${n2(d.price.change)} (${pct(d.price.changePct)})</span>
     </div>
-    <div class="price-meta">Vol: ${fmt(d.price.volume,0)} · Avg: ${fmt(d.price.avgVolume,0)}</div>
+    <div class="price-meta">Vol: ${fmt(d.price.volume,0)} · Avg: ${fmt(d.price.avgVolume,0)} · Mkt Cap: ${fmt(d.price.mktCap,1)}</div>
   </div>
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
     ${d.sector!=='—'?`<span class="tag">${d.sector}</span>`:''}
@@ -415,21 +390,19 @@ function renderAnalise(){
   </div>
 </div>
 <div class="kpi-grid">
-  <div class="kpi"><div class="kpi-label">Máx. período</div><div class="kpi-val">${fmt(d.price.high52w,2)}</div></div>
-  <div class="kpi"><div class="kpi-label">Mín. período</div><div class="kpi-val">${fmt(d.price.low52w,2)}</div></div>
-  <div class="kpi"><div class="kpi-label">% do Máximo</div><div class="kpi-val ${hi52>95?'g':hi52>80?'a':'r'}">${hi52.toFixed(1)}%</div></div>
-  <div class="kpi"><div class="kpi-label">RSI 14</div><div class="kpi-val ${rsiCls}">${rsi?rsi.toFixed(1):'—'}</div><div class="kpi-sub">${rsiSig}</div></div>
-  ${d.fundamentals?`
-  <div class="kpi"><div class="kpi-label">P/L</div><div class="kpi-val">${d.fundamentals.pe?d.fundamentals.pe.toFixed(1):'—'}</div></div>
-  <div class="kpi"><div class="kpi-label">Div. Yield</div><div class="kpi-val ${d.fundamentals.divYield>3?'g':''}">${d.fundamentals.divYield?d.fundamentals.divYield.toFixed(2)+'%':'—'}</div></div>
-  <div class="kpi"><div class="kpi-label">ROE</div><div class="kpi-val ${d.fundamentals.roe>15?'g':d.fundamentals.roe<0?'r':''}">${d.fundamentals.roe?d.fundamentals.roe.toFixed(1)+'%':'—'}</div></div>
-  <div class="kpi"><div class="kpi-label">Upside</div><div class="kpi-val ${d.fundamentals.upside>0?'g':'r'}">${d.fundamentals.upside?pct(d.fundamentals.upside):'—'}</div></div>
-  `:''}
+  <div class="kpi"><div class="kpi-label">Máx. 52 sem.</div><div class="kpi-val">${n2(d.price.high52w)}</div></div>
+  <div class="kpi"><div class="kpi-label">Mín. 52 sem.</div><div class="kpi-val">${n2(d.price.low52w)}</div></div>
+  <div class="kpi"><div class="kpi-label">% do Máximo</div><div class="kpi-val ${hi52>95?'g':hi52>80?'a':'r'}">${hi52?hi52.toFixed(1)+'%':'—'}</div></div>
+  <div class="kpi"><div class="kpi-label">RSI 14</div><div class="kpi-val ${rsiCls}">${rsi?n1(rsi):'—'}</div><div class="kpi-sub">${rsiSig}</div></div>
+  <div class="kpi"><div class="kpi-label">P/L</div><div class="kpi-val">${n1(d.fundamentals.pe)}</div></div>
+  <div class="kpi"><div class="kpi-label">Div. Yield</div><div class="kpi-val ${d.fundamentals.divYield>3?'g':''}">${d.fundamentals.divYield?n2(d.fundamentals.divYield)+'%':'—'}</div></div>
+  <div class="kpi"><div class="kpi-label">ROE</div><div class="kpi-val ${d.fundamentals.roe>15?'g':d.fundamentals.roe<0?'r':''}">${d.fundamentals.roe?n1(d.fundamentals.roe)+'%':'—'}</div></div>
+  <div class="kpi"><div class="kpi-label">EPS</div><div class="kpi-val">${n2(d.fundamentals.eps)}</div></div>
 </div>
 <div class="chart-section">
   <div class="chart-header">
     <span class="chart-title">Preço</span>
-    <div class="overlay-controls">
+    <div class="ovl-controls">
       <button class="ovl-btn on" data-c="b" id="btn-ma20" onclick="toggleOverlay('ma20')">MA20</button>
       <button class="ovl-btn on" data-c="r" id="btn-ma50" onclick="toggleOverlay('ma50')">MA50</button>
       <button class="ovl-btn" data-c="a" id="btn-bb" onclick="toggleOverlay('bb')">Bollinger</button>
@@ -437,7 +410,7 @@ function renderAnalise(){
   </div>
   <div class="chart-wrap" style="height:240px"><canvas id="c-price" role="img" aria-label="Gráfico de preço"></canvas></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<div class="two-col">
   <div class="chart-section">
     <div class="chart-header"><span class="chart-title">RSI (14)</span></div>
     <div class="chart-wrap" style="height:120px"><canvas id="c-rsi" role="img" aria-label="RSI"></canvas></div>
@@ -459,28 +432,31 @@ function toggleOverlay(k){
   else{const map={ma20:1,ma50:2};charts.price.data.datasets[map[k]].hidden=!overlays[k];}
   charts.price.update();
 }
+
 function buildCharts(){
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
-  const d=D,c=d.chart;
+  const c=D.chart;
   const pCtx=$('c-price');if(!pCtx)return;
   const xSc={ticks:{maxTicksLimit:8,color:'#5a607a',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}};
   const ySc={ticks:{color:'#5a607a',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}};
+  const tip={backgroundColor:'#13161c',borderColor:'rgba(255,255,255,.1)',borderWidth:1,titleColor:'#7a8099',bodyColor:'#e8eaf0',callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y?.toFixed(2)||'—')}};
+
   charts.price=new Chart(pCtx,{type:'line',data:{labels:c.dates,datasets:[
     {label:'Preço',data:c.close,borderColor:'#4f8ef7',borderWidth:2,pointRadius:0,fill:false,tension:.05},
     {label:'MA20',data:c.ma20,borderColor:'#4f8ef7',borderWidth:1,pointRadius:0,fill:false,borderDash:[5,3],hidden:!overlays.ma20},
     {label:'MA50',data:c.ma50,borderColor:'#f06060',borderWidth:1,pointRadius:0,fill:false,borderDash:[5,3],hidden:!overlays.ma50},
     {label:'BB+',data:c.bbU,borderColor:'rgba(240,176,79,.4)',borderWidth:1,pointRadius:0,fill:false,borderDash:[2,2],hidden:!overlays.bb},
     {label:'BB-',data:c.bbLo,borderColor:'rgba(240,176,79,.4)',borderWidth:1,pointRadius:0,fill:false,borderDash:[2,2],hidden:!overlays.bb},
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#13161c',borderColor:'rgba(255,255,255,.1)',borderWidth:1,titleColor:'#7a8099',bodyColor:'#e8eaf0',callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y?.toFixed(2)||'—')}}},
-    scales:{x:xSc,y:ySc}}});
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:tip},scales:{x:xSc,y:ySc}}});
+
   const rCtx=$('c-rsi');
   if(rCtx)charts.rsi=new Chart(rCtx,{type:'line',data:{labels:c.dates,datasets:[
-    {data:c.rsi,borderColor:'#4ecb8d',borderWidth:1.5,pointRadius:0,fill:false,tension:.1},
-    {data:c.rsi.map(()=>70),borderColor:'rgba(240,96,96,.3)',borderWidth:1,pointRadius:0,borderDash:[4,2]},
-    {data:c.rsi.map(()=>30),borderColor:'rgba(78,203,141,.3)',borderWidth:1,pointRadius:0,borderDash:[4,2]},
+    {data:c.rsiArr,borderColor:'#4ecb8d',borderWidth:1.5,pointRadius:0,fill:false,tension:.1},
+    {data:c.rsiArr.map(()=>70),borderColor:'rgba(240,96,96,.3)',borderWidth:1,pointRadius:0,borderDash:[4,2]},
+    {data:c.rsiArr.map(()=>30),borderColor:'rgba(78,203,141,.3)',borderWidth:1,pointRadius:0,borderDash:[4,2]},
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
     scales:{x:{ticks:{maxTicksLimit:6,color:'#5a607a',font:{size:9}},grid:{color:'rgba(255,255,255,.03)'}},y:{min:0,max:100,ticks:{color:'#5a607a',font:{size:9},stepSize:25},grid:{color:'rgba(255,255,255,.03)'}}}}});
+
   const mCtx=$('c-macd');
   if(mCtx)charts.macd=new Chart(mCtx,{data:{labels:c.dates,datasets:[
     {type:'line',label:'MACD',data:c.macd,borderColor:'#4f8ef7',borderWidth:1.5,pointRadius:0,fill:false,tension:.1,order:1},
@@ -490,31 +466,35 @@ function buildCharts(){
     scales:{x:{ticks:{maxTicksLimit:6,color:'#5a607a',font:{size:9}},grid:{color:'rgba(255,255,255,.03)'}},y:{ticks:{color:'#5a607a',font:{size:9}},grid:{color:'rgba(255,255,255,.03)'}}}}});
 }
 
-// ─── RENDER FUNDAMENTOS ───────────────────────────────────────────────────
+// ─── RENDER FUNDAMENTOS ────────────────────────────────────────────────────
 function renderFundamentos(){
   if(!D){$('fund-content').innerHTML='<div class="empty"><div>Busque um ticker primeiro</div></div>';return;}
   const f=D.fundamentals;
-  if(!f){$('fund-content').innerHTML='<div class="empty"><div class="empty-icon">⚠</div><div>Dados fundamentalistas não disponíveis</div></div>';return;}
-  const fr=(k,v,suf='')=>`<div class="fund-row"><span class="fund-key">${k}</span><span class="fund-val">${v===null||v===undefined||isNaN(v)?'—':parseFloat(v).toFixed(2)+suf}</span></div>`;
+  const fr=(k,v,suf='')=>`<div class="fund-row"><span class="fund-key">${k}</span><span class="fund-val">${v===null||v===undefined||isNaN(v)||v===0?'—':parseFloat(v).toFixed(2)+suf}</span></div>`;
   $('fund-content').innerHTML=`<div class="fund-grid">
   <div>
     <div class="fund-card"><div class="fund-card-title">Valuation</div>
-      ${fr('P/L (Trailing)',f.pe)}${fr('P/L (Forward)',f.forwardPE)}${fr('P/VP',f.pb)}${fr('P/S',f.ps)}
-      ${fr('EV/EBITDA',f.evEbitda)}${fr('EV/Receita',f.evRev)}${fr('EPS TTM',f.eps)}${fr('EPS Forward',f.fwdEps)}${fr('Book Value',f.bv)}
-      <div class="fund-row"><span class="fund-key">Preço Alvo</span><span class="fund-val">${f.target?D.currency+' '+f.target.toFixed(2):'—'}</span></div>
-      <div class="fund-row"><span class="fund-key">Upside Consenso</span><span class="fund-val" style="color:${f.upside>0?'var(--green)':'var(--red)'}">${f.upside?pct(f.upside):'—'}</span></div>
+      ${fr('P/L (TTM)',f.pe)} ${fr('P/L (Forward)',f.forwardPE)} ${fr('P/VP',f.pb)} ${fr('P/S',f.ps)}
+      ${fr('EV/EBITDA',f.evEbitda)} ${fr('EPS',f.eps)} ${fr('Beta',f.beta)}
+      ${f.analystTarget?`<div class="fund-row"><span class="fund-key">Preço Alvo (consenso)</span><span class="fund-val">${n2(f.analystTarget)}</span></div>`:''}
+      ${f.upside!==null?`<div class="fund-row"><span class="fund-key">Upside</span><span class="fund-val" style="color:${f.upside>0?'var(--green)':'var(--red)'}">${pct(f.upside)}</span></div>`:''}
     </div>
-    <div class="fund-card"><div class="fund-card-title">Dividendos</div>${fr('Dividend Yield',f.divYield,'%')}${fr('Payout Ratio',f.payout,'%')}</div>
+    <div class="fund-card" style="margin-top:14px"><div class="fund-card-title">Dividendos</div>
+      ${fr('Dividend Yield',f.divYield,'%')}
+    </div>
   </div>
   <div>
     <div class="fund-card"><div class="fund-card-title">Rentabilidade</div>
-      ${fr('ROE',f.roe,'%')}${fr('ROA',f.roa,'%')}${fr('Margem Bruta',f.grossM,'%')}${fr('Margem Operacional',f.opM,'%')}${fr('Margem Líquida',f.profitM,'%')}${fr('Cresc. Receita',f.revG,'%')}${fr('Cresc. Lucros',f.epsG,'%')}
+      ${fr('ROE',f.roe,'%')} ${fr('ROA',f.roa,'%')}
+      ${fr('Margem Bruta',f.grossM,'%')} ${fr('Margem Operacional',f.opM,'%')} ${fr('Margem Líquida',f.profitM,'%')}
     </div>
-    <div class="fund-card"><div class="fund-card-title">Saúde Financeira</div>${fr('Dívida/PL',f.dte)}${fr('Liquidez Corrente',f.cr)}${fr('Liquidez Seca',f.qr)}${fr('Beta',f.beta)}</div>
-    <div class="fund-card"><div class="fund-card-title">Escala</div>
-      <div class="fund-row"><span class="fund-key">Receita</span><span class="fund-val">${fmt(f.rev,1)}</span></div>
+    <div class="fund-card" style="margin-top:14px"><div class="fund-card-title">Saúde Financeira</div>
+      ${fr('Dívida/PL',f.dte)} ${fr('Liquidez Corrente',f.cr)}
+    </div>
+    <div class="fund-card" style="margin-top:14px"><div class="fund-card-title">Escala</div>
+      <div class="fund-row"><span class="fund-key">Receita</span><span class="fund-val">${fmt(f.revenue,1)}</span></div>
       <div class="fund-row"><span class="fund-key">EBITDA</span><span class="fund-val">${fmt(f.ebitda,1)}</span></div>
-      <div class="fund-row"><span class="fund-key">Enterprise Value</span><span class="fund-val">${fmt(f.mkCap,1)}</span></div>
+      <div class="fund-row"><span class="fund-key">Market Cap</span><span class="fund-val">${fmt(f.mktCap,1)}</span></div>
     </div>
   </div></div>`;
 }
@@ -534,41 +514,44 @@ function renderTecnicos(){
   const card=(lbl,val,sig,det='')=>`<div class="tech-card"><div class="tc-label">${lbl}</div><div class="tc-val" style="color:${sig[0]==='buy'?'var(--green)':sig[0]==='sell'?'var(--red)':'var(--amber)'}">${val}</div><span class="signal ${sig[0]}">${sig[0]==='buy'?'▲':sig[0]==='sell'?'▼':'●'} ${sig[1]}</span>${det?`<div class="tc-detail">${det}</div>`:''}</div>`;
   $('tech-content').innerHTML=`
 <div class="tech-grid">
-  ${card('RSI (14)',rsi?rsi.toFixed(1):'—',rsiSig,'<30 sobrevendido · >70 sobrecomprado')}
+  ${card('RSI (14)',rsi?n1(rsi):'—',rsiSig,'<30 sobrevendido · >70 sobrecomprado')}
   ${card('MACD',t.macd?t.macd.toFixed(3):'—',macdSig,'Sinal: '+(t.macdSig?t.macdSig.toFixed(3):'—'))}
   ${card('Momentum',t.macdH?t.macdH.toFixed(3):'—',momSig,'Histograma MACD')}
-  ${card('MA 20',t.ma20?t.ma20.toFixed(2):'—',ma20Sig,t.pvMa20?pct(t.pvMa20)+' vs MA':'—')}
-  ${card('MA 50',t.ma50?t.ma50.toFixed(2):'—',ma50Sig,t.pvMa50?pct(t.pvMa50)+' vs MA':'—')}
-  ${card('MA 200',t.ma200?t.ma200.toFixed(2):'—',ma200Sig,t.pvMa200?pct(t.pvMa200)+' vs MA':'—')}
-  ${card('Bollinger %B',bbPct!==null?bbPct.toFixed(0)+'%':'—',bbSig,'↑ '+fmt(t.bbU,2)+' · ↓ '+fmt(t.bbL,2))}
+  ${card('MA 20',t.ma20?n2(t.ma20):'—',ma20Sig,t.pvMa20?pct(t.pvMa20)+' vs MA':'—')}
+  ${card('MA 50',t.ma50?n2(t.ma50):'—',ma50Sig,t.pvMa50?pct(t.pvMa50)+' vs MA':'—')}
+  ${card('MA 200',t.ma200?n2(t.ma200):'—',ma200Sig,t.pvMa200?pct(t.pvMa200)+' vs MA':'—')}
+  ${card('Bollinger %B',bbPct!==null?n1(bbPct)+'%':'—',bbSig,'↑ '+n2(t.bbU)+' · ↓ '+n2(t.bbL))}
 </div>
 <div class="chart-section"><div class="chart-header"><span class="chart-title">Posição RSI</span></div>
   <div style="padding:0 8px 8px">
     <div class="rsi-track" style="margin:16px 0 8px"><div class="rsi-zone-sell"></div><div class="rsi-zone-buy"></div>
       <div class="rsi-needle" style="left:${rsi||50}%;background:${rsi<30?'var(--green)':rsi>70?'var(--red)':'var(--amber)'}"></div></div>
     <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--mono)">
-      <span>0</span><span style="color:var(--green)">30←Compra</span><span>${rsi?rsi.toFixed(1):'—'}</span><span style="color:var(--red)">Venda→70</span><span>100</span>
+      <span>0</span><span style="color:var(--green)">30←Compra</span><span>${rsi?n1(rsi):'—'}</span><span style="color:var(--red)">Venda→70</span><span>100</span>
     </div>
   </div>
 </div>
 <div class="chart-section"><div class="chart-header"><span class="chart-title">Resumo técnico</span></div>
   <div style="color:var(--muted);font-size:13px;line-height:1.9">
-    ${rsi<30?'<span style="color:var(--green);font-weight:500">RSI sobrevendido ('+rsi.toFixed(1)+')</span> — possível ponto de entrada.':rsi>70?'<span style="color:var(--red);font-weight:500">RSI sobrecomprado ('+rsi.toFixed(1)+')</span> — cautela.':'<span style="color:var(--amber);font-weight:500">RSI neutro ('+rsi.toFixed(1)+')</span> — sem sinal extremo.'}
+    ${rsi<30?`<span style="color:var(--green);font-weight:500">RSI sobrevendido (${n1(rsi)})</span> — possível ponto de entrada.`:rsi>70?`<span style="color:var(--red);font-weight:500">RSI sobrecomprado (${n1(rsi)})</span> — cautela com novas posições.`:`<span style="color:var(--amber);font-weight:500">RSI neutro (${n1(rsi)})</span> — sem sinal extremo.`}
     ${t.macd>t.macdSig?' MACD acima do sinal → momentum de alta.'?' MACD abaixo do sinal → momentum de baixa.'}
-    ${ma20Sig[0]==='buy'&&ma50Sig[0]==='buy'?' Preço acima de MA20 e MA50 → tendência positiva.':ma20Sig[0]==='sell'&&ma50Sig[0]==='sell'?' Preço abaixo de MA20 e MA50 → tendência negativa.':' Sinais mistos nas médias.'}
-    ${bbPct!==null?bbPct>80?' Preço no topo da Bollinger Band → possível resistência.':bbPct<20?' Preço na base da Bollinger Band → possível suporte.':`Bollinger %B: ${bbPct.toFixed(0)}%.`:''}
+    ${ma20Sig[0]==='buy'&&ma50Sig[0]==='buy'?' Preço acima de MA20 e MA50 → tendência positiva.':ma20Sig[0]==='sell'&&ma50Sig[0]==='sell'?' Preço abaixo de MA20 e MA50 → tendência negativa.':' Sinais mistos nas médias móveis.'}
+    ${bbPct!==null?bbPct>80?' Preço no topo da Bollinger Band → possível resistência.':bbPct<20?' Preço na base da Bollinger Band → possível suporte.':`Bollinger %B: ${n1(bbPct)}%.`:''}
   </div>
 </div>`;
 }
 
 // ─── SCREENER ─────────────────────────────────────────────────────────────
 const FILTERS=[
-  {id:'pe',label:'P/L'},{id:'pb',label:'P/VP'},{id:'divYield',label:'Div. Yield (%)'},
-  {id:'roe',label:'ROE (%)'},{id:'rsi',label:'RSI'},{id:'changePct',label:'Var. % período'},
+  {id:'pe',label:'P/L'},{id:'pb',label:'P/VP'},
+  {id:'divYield',label:'Div. Yield (%)'},{id:'roe',label:'ROE (%)'},
+  {id:'rsi',label:'RSI'},{id:'changePct',label:'Var. % período'},
   {id:'profitM',label:'Margem Líq. (%)'},{id:'beta',label:'Beta'},
 ];
 $('filter-grid').innerHTML=FILTERS.map(f=>`<div class="filter-card"><div class="filter-label">${f.label}</div><div class="filter-row"><select id="op_${f.id}"><option value="">—</option><option value="lt">&lt;</option><option value="lte">≤</option><option value="gt">&gt;</option><option value="gte">≥</option></select><input type="number" id="val_${f.id}" placeholder="valor" step="0.01"></div></div>`).join('');
+
 function setChip(t){$('screen-tickers').value=t;}
+
 async function runScreener(){
   const raw=$('screen-tickers').value;
   const tickers=raw.split(/[,\s\n]+/).map(t=>t.trim().toUpperCase()).filter(Boolean);
@@ -576,44 +559,74 @@ async function runScreener(){
   const filters={};
   FILTERS.forEach(({id})=>{const op=$('op_'+id)?.value,val=parseFloat($('val_'+id)?.value);if(op&&!isNaN(val))filters[id]={op,value:val};});
   const res=$('screen-results');
-  res.innerHTML='<div class="progress"><div class="progress-fill" id="prog" style="width:0"></div></div><div style="color:var(--muted);font-size:13px" id="prog-txt">Analisando 0 / '+tickers.length+'...</div>';
+  res.innerHTML=`<div class="progress"><div class="progress-fill" id="prog" style="width:0"></div></div><div style="color:var(--muted);font-size:13px" id="prog-txt">Analisando 0 / ${tickers.length}...</div>`;
   $('run-btn').disabled=true;
   const results=[];
-  for(let i=0;i<tickers.length;i++){
-    $('prog').style.width=((i/tickers.length)*100)+'%';
-    $('prog-txt').textContent='Analisando '+(i+1)+' / '+tickers.length+': '+tickers[i];
+
+  // Batch quotes
+  const batchSize=10;
+  for(let b=0;b<tickers.length;b+=batchSize){
+    const batch=tickers.slice(b,b+batchSize);
     try{
-      const cd=await proxyFetch('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(tickers[i])+'?interval=1d&range=3mo');
-      if(!cd.chart?.result)continue;
-      const cr=cd.chart.result[0],prices=(cr.indicators.quote[0].close||[]).filter(v=>v!==null);
-      if(prices.length<2)continue;
-      const last=prices[prices.length-1],first=prices[0],chgPct=((last-first)/first)*100;
-      const rsiArr=calcRSI(prices,14),rsi=rsiArr[rsiArr.length-1];
-      let pe=null,pb=null,divYield=null,roe=null,profitM=null,beta=null;
-      try{
-        const fd=await proxyFetch('https://query1.finance.yahoo.com/v10/finance/quoteSummary/'+encodeURIComponent(tickers[i])+'?modules=defaultKeyStatistics,financialData,summaryDetail');
-        if(fd.quoteSummary?.result){
-          const fr=fd.quoteSummary.result[0];
-          pe=fr.summaryDetail?.trailingPE?.raw||null;pb=fr.defaultKeyStatistics?.priceToBook?.raw||null;
-          divYield=(fr.summaryDetail?.dividendYield?.raw||0)*100;roe=(fr.financialData?.returnOnEquity?.raw||0)*100;
-          profitM=(fr.financialData?.profitMargins?.raw||0)*100;beta=fr.defaultKeyStatistics?.beta?.raw||null;
+      const [quotesData,ratiosPromises]=await Promise.all([
+        fmp(`/v3/quote/${batch.map(encodeURIComponent).join(',')}`),
+        Promise.all(batch.map(t=>fmp(`/v3/ratios-ttm/${encodeURIComponent(t)}`).catch(()=>[{}]))),
+      ]);
+      const ratiosMap={};
+      batch.forEach((t,i)=>{ratiosMap[t]=ratiosPromises[i]?.[0]||{};});
+
+      for(const q of (quotesData||[])){
+        const ticker=q.symbol;
+        $('prog').style.width=(((results.length+1)/tickers.length)*100)+'%';
+        $('prog-txt').textContent=`Analisando ${results.length+1} / ${tickers.length}: ${ticker}`;
+
+        // Get historical for RSI
+        let rsi=null,changePct=q.changesPercentage||0;
+        try{
+          const {from}=periodDates('3mo');
+          const hist=await fmp(`/v3/historical-price-full/${encodeURIComponent(ticker)}?from=${from}`);
+          const prices=(hist?.historical||[]).reverse().map(h=>h.close).filter(v=>v);
+          if(prices.length>=14){const r=calcRSI(prices,14);rsi=r[r.length-1];}
+        }catch(e){}
+
+        const rat=ratiosMap[ticker]||{};
+        const row={
+          ticker,name:(q.name||ticker).slice(0,28),price:q.price||0,
+          changePct,
+          pe:q.pe||null,pb:rat.priceToBookRatioTTM||null,
+          divYield:(q.dividendYield||rat.dividendYieldTTM||0)*100,
+          roe:(rat.returnOnEquityTTM||0)*100,
+          profitM:(rat.netProfitMarginTTM||0)*100,
+          beta:parseFloat(q.beta)||null,rsi,
+        };
+        let pass=true;
+        for(const[key,cond]of Object.entries(filters)){
+          const v=row[key];if(v===null||v===undefined||isNaN(v)){pass=false;break;}
+          if(cond.op==='lt'&&v>=cond.value){pass=false;break;}if(cond.op==='lte'&&v>cond.value){pass=false;break;}
+          if(cond.op==='gt'&&v<=cond.value){pass=false;break;}if(cond.op==='gte'&&v<cond.value){pass=false;break;}
         }
-      }catch(e){}
-      const row={ticker:tickers[i],name:(cr.meta.longName||cr.meta.shortName||tickers[i]).slice(0,28),price:last,changePct:chgPct,pe,pb,divYield,roe,rsi,profitM,beta};
-      let pass=true;
-      for(const[key,cond]of Object.entries(filters)){
-        const v=row[key];if(v===null||v===undefined){pass=false;break;}
-        if(cond.op==='lt'&&v>=cond.value){pass=false;break;}if(cond.op==='lte'&&v>cond.value){pass=false;break;}
-        if(cond.op==='gt'&&v<=cond.value){pass=false;break;}if(cond.op==='gte'&&v<cond.value){pass=false;break;}
+        if(pass)results.push(row);
       }
-      if(pass)results.push(row);
     }catch(e){continue;}
   }
+
   $('prog').style.width='100%';$('run-btn').disabled=false;
   if(!results.length){res.innerHTML='<div class="empty" style="min-height:120px"><div class="empty-icon">🔍</div><div>Nenhuma ação passou pelos filtros</div></div>';return;}
-  res.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">'+results.length+' ação(ões) encontradas</div><div class="screen-table-wrap"><table class="screen-table"><thead><tr><th>Ticker</th><th>Nome</th><th>Preço</th><th>Var.%</th><th>P/L</th><th>P/VP</th><th>Div.Yield</th><th>ROE%</th><th>Marg.Líq.</th><th>Beta</th><th>RSI</th></tr></thead><tbody>'+
-    results.map(r=>'<tr class="clickable" onclick="loadResult(\''+r.ticker+'\')"><td class="ticker-cell">'+r.ticker+'</td><td style="color:var(--muted)">'+r.name+'</td><td style="font-family:var(--mono)">'+r.price.toFixed(2)+'</td><td style="font-family:var(--mono);color:'+clr(r.changePct)+'">'+pct(r.changePct)+'</td><td style="font-family:var(--mono)">'+(r.pe?r.pe.toFixed(1):'—')+'</td><td style="font-family:var(--mono)">'+(r.pb?r.pb.toFixed(1):'—')+'</td><td style="font-family:var(--mono)">'+(r.divYield?r.divYield.toFixed(2)+'%':'—')+'</td><td style="font-family:var(--mono);color:'+(r.roe>15?'var(--green)':r.roe<0?'var(--red)':'var(--text)')+'">'+(r.roe?r.roe.toFixed(1)+'%':'—')+'</td><td style="font-family:var(--mono)">'+(r.profitM?r.profitM.toFixed(1)+'%':'—')+'</td><td style="font-family:var(--mono)">'+(r.beta?r.beta.toFixed(2):'—')+'</td><td style="font-family:var(--mono);color:'+(r.rsi<30?'var(--green)':r.rsi>70?'var(--red)':'var(--amber)')+'">'+( r.rsi?r.rsi.toFixed(1):'—')+'</td></tr>').join('')+
-    '</tbody></table></div>';
+  res.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:10px">${results.length} ação(ões) encontradas</div>
+<div class="screen-table-wrap"><table class="screen-table"><thead><tr>
+  <th>Ticker</th><th>Nome</th><th>Preço</th><th>Var.%</th><th>P/L</th><th>P/VP</th><th>Div.Yield</th><th>ROE%</th><th>Marg.Líq.</th><th>Beta</th><th>RSI</th>
+</tr></thead><tbody>${results.map(r=>`<tr class="clickable" onclick="loadResult('${r.ticker}')">
+  <td class="ticker-cell">${r.ticker}</td><td style="color:var(--muted)">${r.name}</td>
+  <td style="font-family:var(--mono)">${n2(r.price)}</td>
+  <td style="font-family:var(--mono);color:${clr(r.changePct)}">${pct(r.changePct)}</td>
+  <td style="font-family:var(--mono)">${r.pe?n1(r.pe):'—'}</td>
+  <td style="font-family:var(--mono)">${r.pb?n1(r.pb):'—'}</td>
+  <td style="font-family:var(--mono)">${r.divYield?n2(r.divYield)+'%':'—'}</td>
+  <td style="font-family:var(--mono);color:${r.roe>15?'var(--green)':r.roe<0?'var(--red)':'var(--text)'}">${r.roe?n1(r.roe)+'%':'—'}</td>
+  <td style="font-family:var(--mono)">${r.profitM?n1(r.profitM)+'%':'—'}</td>
+  <td style="font-family:var(--mono)">${r.beta?n2(r.beta):'—'}</td>
+  <td style="font-family:var(--mono);color:${r.rsi?r.rsi<30?'var(--green)':r.rsi>70?'var(--red)':'var(--amber)':'var(--muted)'}">${r.rsi?n1(r.rsi):'—'}</td>
+</tr>`).join('')}</tbody></table></div>`;
 }
 function loadResult(ticker){$('ticker-input').value=ticker;$('nav-analise').click();fetchStock(ticker);}
 </script>
