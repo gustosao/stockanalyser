@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Teste AV</title>
+<style>
+body{font-family:monospace;background:#0d0f13;color:#e8eaf0;padding:30px;max-width:700px}
+h2{color:#4f8ef7;margin-bottom:20px}
+button{background:#4f8ef7;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:20px}
+.box{background:#13161c;border:1px solid #333;border-radius:8px;padding:14px;margin-bottom:10px;white-space:pre-wrap;font-size:12px;line-height:1.6}
+.ok{border-color:#4ecb8d;color:#4ecb8d}
+.err{border-color:#f06060;color:#f06060}
+.info{color:#7a8099}
+</style>
+</head>
+<body>
+<h2>Teste Alpha Vantage</h2>
+<button onclick="run()">▶ Testar</button>
+<div id="out"></div>
+<script>
+const KEY='MKWK72TIYWMQYJCU';
+function log(msg,cls='info'){const d=document.createElement('div');d.className='box '+cls;d.textContent=msg;document.getElementById('out').appendChild(d);}
+async function run(){
+  document.getElementById('out').innerHTML='';
+  log('Testando Alpha Vantage...');
+  try{
+    const url=`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=${KEY}`;
+    log('URL: '+url);
+    const r=await fetch(url);
+    log('Status: '+r.status+' '+r.statusText, r.ok?'ok':'err');
+    const txt=await r.text();
+    log('Resposta completa:\n'+txt, r.ok?'ok':'err');
+  }catch(e){
+    log('ERRO: '+e.message+'\nNome: '+e.name,'err');
+  }
+}
+</script>
+</body>
+</html>
