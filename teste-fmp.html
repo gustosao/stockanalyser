@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Teste FMP</title>
+<style>
+body{font-family:monospace;background:#0d0f13;color:#e8eaf0;padding:30px;max-width:700px}
+h2{color:#4f8ef7;margin-bottom:20px}
+button{background:#4f8ef7;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:20px}
+.box{background:#13161c;border:1px solid #222;border-radius:8px;padding:16px;margin-bottom:12px;white-space:pre-wrap;font-size:12px;line-height:1.6}
+.ok{border-color:#4ecb8d;color:#4ecb8d}
+.err{border-color:#f06060;color:#f06060}
+.info{color:#7a8099}
+</style>
+</head>
+<body>
+<h2>◈ Diagnóstico FMP API</h2>
+<button onclick="runTest()">▶ Testar agora</button>
+<div id="log"></div>
+
+<script>
+const KEY = 'jSvT9bE2rcVL8Zaw8OVzicualn9XAw08';
+
+function log(msg, cls=''){
+  const d = document.createElement('div');
+  d.className = 'box ' + cls;
+  d.textContent = msg;
+  document.getElementById('log').appendChild(d);
+}
+
+async function runTest(){
+  document.getElementById('log').innerHTML = '';
+  log('Iniciando testes...', 'info');
+
+  // Test 1: basic connectivity
+  log('Teste 1: conectividade básica (google.com)...', 'info');
+  try{
+    await fetch('https://www.google.com/favicon.ico', {mode:'no-cors'});
+    log('✓ Internet funcionando', 'ok');
+  }catch(e){
+    log('✗ Sem internet: ' + e.message, 'err');
+    return;
+  }
+
+  // Test 2: FMP quote
+  log('Teste 2: FMP API - cotação AAPL...', 'info');
+  try{
+    const url = `https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=${KEY}`;
+    log('URL: ' + url, 'info');
+    const res = await fetch(url);
+    log('Status HTTP: ' + res.status + ' ' + res.statusText, res.ok?'ok':'err');
+    const text = await res.text();
+    log('Resposta (primeiros 500 chars):\n' + text.slice(0,500), res.ok?'ok':'err');
+    if(res.ok){
+      const data = JSON.parse(text);
+      if(data && data[0]){
+        log(`✓ AAPL: $${data[0].price} | P/E: ${data[0].pe} | Vol: ${data[0].volume}`, 'ok');
+      }
+    }
+  }catch(e){
+    log('✗ Erro: ' + e.message + '\n\nTipo: ' + e.name + '\n\nStack: ' + e.stack, 'err');
+  }
+
+  // Test 3: FMP historical
+  log('Teste 3: FMP API - histórico AAPL...', 'info');
+  try{
+    const url = `https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?timeseries=10&apikey=${KEY}`;
+    const res = await fetch(url);
+    log('Status HTTP: ' + res.status, res.ok?'ok':'err');
+    const data = await res.json();
+    if(data && data.historical){
+      log(`✓ ${data.historical.length} dias de histórico. Último: ${data.historical[0].date} close=${data.historical[0].close}`, 'ok');
+    } else {
+      log('Resposta inesperada: ' + JSON.stringify(data).slice(0,300), 'err');
+    }
+  }catch(e){
+    log('✗ Erro: ' + e.message, 'err');
+  }
+
+  // Test 4: PETR4.SA
+  log('Teste 4: FMP API - ação brasileira PETR4.SA...', 'info');
+  try{
+    const url = `https://financialmodelingprep.com/api/v3/quote/PETR4.SA?apikey=${KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data && data[0]){
+      log(`✓ PETR4.SA: R$${data[0].price} | Nome: ${data[0].name}`, 'ok');
+    } else {
+      log('Sem dados para PETR4.SA: ' + JSON.stringify(data).slice(0,200), 'err');
+    }
+  }catch(e){
+    log('✗ Erro: ' + e.message, 'err');
+  }
+
+  log('Testes concluídos. Me mande um print desta tela.', 'info');
+}
+</script>
+</body>
+</html>
